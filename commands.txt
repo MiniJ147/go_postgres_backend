@@ -1,0 +1,12 @@
+go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+
+sqlc version
+v1.25.0
+
+go install github.com/pressly/goose/v3/cmd/goose@latest
+
+goose -version
+
+goose {sqlpath} up {or} down
+
+sqlc generate #makes the go code for our sql statments 
