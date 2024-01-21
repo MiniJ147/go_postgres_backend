@@ -42,9 +42,14 @@ func main() {
 		api.SendJSON(w, r, 200, api.Message{Msg: "Hello From Server!"})
 	})
 
-	r.Get("/view", apiCfg.HandlerFetchAuthors)
+	r.Route("/author", func(router chi.Router) {
+		router.Get("/view", apiCfg.HandlerFetchAuthors)
+		router.Post("/create", apiCfg.HandlerCreateAuthor)
+	})
 
-	r.Post("/create", apiCfg.HandlerCreateAuthor)
+	r.Route("/book", func(router chi.Router) {
+		router.Get("/create", apiCfg.HandlerCreateBook)
+	})
 
 	fmt.Println("Server Started!")
 
