@@ -41,3 +41,36 @@ func (q *Queries) CreateAuthor(ctx context.Context, arg CreateAuthorParams) (Aut
 	)
 	return i, err
 }
+
+const fetchAuthor = `-- name: FetchAuthor :many
+SELECT id, created_at, updated_at, name FROM authors
+ORDER BY name
+`
+
+func (q *Queries) FetchAuthor(ctx context.Context) ([]Author, error) {
+	rows, err := q.db.QueryContext(ctx, fetchAuthor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Author
+	for rows.Next() {
+		var i Author
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Name,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

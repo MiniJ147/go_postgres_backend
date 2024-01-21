@@ -10,6 +10,24 @@ import (
 	"github.com/minij147/go_postgres_backend/internal/database"
 )
 
+func (apiCfg *Config) HandlerFetchAuthors(w http.ResponseWriter, r *http.Request) {
+	type Response struct {
+		Authors []database.Author `json:"authors"`
+	}
+
+	authorList, err := apiCfg.DB.FetchAuthor(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println("Could not fetch db")
+	}
+
+	res := Response{
+		Authors: authorList,
+	}
+
+	SendJSON(w, r, http.StatusAccepted, res)
+}
+
 func (apiCfg *Config) HandlerCreateAuthor(w http.ResponseWriter, r *http.Request) {
 	type Params struct {
 		Name string `json:"name"`

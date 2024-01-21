@@ -42,6 +42,8 @@ func main() {
 		api.SendJSON(w, r, 200, api.Message{Msg: "Hello From Server!"})
 	})
 
+	r.Get("/view", apiCfg.HandlerFetchAuthors)
+
 	r.Post("/create", apiCfg.HandlerCreateAuthor)
 
 	fmt.Println("Server Started!")
