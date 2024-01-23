@@ -44,11 +44,13 @@ func main() {
 
 	r.Route("/author", func(router chi.Router) {
 		router.Get("/view", apiCfg.HandlerFetchAuthors)
+		//router.Get("/find", apiCfg.HandlerFetchAuthorByName)
 		router.Post("/create", apiCfg.HandlerCreateAuthor)
 	})
 
 	r.Route("/book", func(router chi.Router) {
-		router.Get("/create", apiCfg.HandlerCreateBook)
+		router.Post("/create", apiCfg.HandlerCreateBook)
+		router.Get("/find", apiCfg.HandlerFetchBooks)
 	})
 
 	fmt.Println("Server Started!")

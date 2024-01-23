@@ -6,3 +6,6 @@ RETURNING *;
 -- name: FetchAuthor :many
 SELECT * FROM authors
 ORDER BY name;
+
+-- name: FetchAuthorByName :one
+SELECT * FROM authors WHERE name=($1);

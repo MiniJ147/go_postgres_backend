@@ -60,3 +60,24 @@ func (apiCfg *Config) HandlerCreateAuthor(w http.ResponseWriter, r *http.Request
 
 	SendJSON(w, r, http.StatusAccepted, user)
 }
+
+func (apiCfg *Config) HandlerFetchAuthorByName(w http.ResponseWriter, r *http.Request) {
+	type Params struct {
+		Name string `json:"name"`
+	}
+
+	params := Params{}
+	err := json.NewDecoder(r.Body).Decode(&params)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	author, err := apiCfg.DB.FetchAuthorByName(r.Context(), params.Name)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	SendJSON(w, r, 200, author)
+}

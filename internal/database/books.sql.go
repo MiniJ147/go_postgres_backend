@@ -44,3 +44,70 @@ func (q *Queries) CreateBook(ctx context.Context, arg CreateBookParams) (Book, e
 	)
 	return i, err
 }
+
+const fetchBooks = `-- name: FetchBooks :many
+SELECT id, created_at, updated_at, title, author_id FROM books
+`
+
+func (q *Queries) FetchBooks(ctx context.Context) ([]Book, error) {
+	rows, err := q.db.QueryContext(ctx, fetchBooks)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Book
+	for rows.Next() {
+		var i Book
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Title,
+			&i.AuthorID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const fetchBooksByAuthorName = `-- name: FetchBooksByAuthorName :many
+SELECT id, created_at, updated_at, title, author_id FROM books WHERE author_id = ($1)
+ORDER BY title
+`
+
+func (q *Queries) FetchBooksByAuthorName(ctx context.Context, authorID uuid.NullUUID) ([]Book, error) {
+	rows, err := q.db.QueryContext(ctx, fetchBooksByAuthorName, authorID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Book
+	for rows.Next() {
+		var i Book
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Title,
+			&i.AuthorID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

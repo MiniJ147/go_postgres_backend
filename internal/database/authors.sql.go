@@ -74,3 +74,19 @@ func (q *Queries) FetchAuthor(ctx context.Context) ([]Author, error) {
 	}
 	return items, nil
 }
+
+const fetchAuthorByName = `-- name: FetchAuthorByName :one
+SELECT id, created_at, updated_at, name FROM authors WHERE name=($1)
+`
+
+func (q *Queries) FetchAuthorByName(ctx context.Context, name string) (Author, error) {
+	row := q.db.QueryRowContext(ctx, fetchAuthorByName, name)
+	var i Author
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+	)
+	return i, err
+}
